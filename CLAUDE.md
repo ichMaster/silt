@@ -4,9 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-**Greenfield.** The repository currently contains only the design spec, a LICENSE, and a
-`.gitignore`. There is no code, no build, no tests, and no dependencies installed yet. The first
-work here is to implement the system the spec describes.
+**Building v0 (phase v0.1).** The repository is scaffolded — `pyproject.toml` (`uv` + `ruff` +
+`pytest` + `numpy`), the `engine` package, a `tests` package, and hermetic CI — and the first engine
+work has begun. The spec is still authoritative for everything not yet built.
+
+### Build / lint / test commands
+
+```bash
+uv sync --extra dev      # create the environment (mirrors Lumi's tooling)
+uv run ruff check .      # lint
+uv run pytest            # tests
+```
 
 The spec lives in `specfication/` (note: the directory name is misspelled on disk — reference it
 as-is). Read it before implementing — the sections below summarize the load-bearing decisions, but
@@ -124,8 +132,8 @@ side and for mirroring proven conventions, never to import from.
 Worth borrowing from Lumi (it solved the same problems first):
 
 - **Tooling:** `uv` for the environment, `ruff` for lint, `pytest` for tests — e.g. `uv sync --extra
-  dev`, `uv run ruff check .`, `uv run pytest`. Adopt the same when scaffolding Silt unless there's
-  reason not to; document the chosen commands here once they exist.
+  dev`, `uv run ruff check .`, `uv run pytest`. Adopted as of v0.1 — see the **Build / lint / test
+  commands** under Project status above.
 - **Injected clock for determinism.** The spec says to reconcile real-time with reproducibility "as
   Lumi already does" — Lumi injects the clock so tests run on a frozen clock. Mirror that pattern in
   the tick loop (§6).
