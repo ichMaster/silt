@@ -35,8 +35,14 @@ touches nothing else. Needs the optional `viz` extra (matplotlib):
 ```bash
 uv sync --extra viz
 uv run python -m tools.viz --pattern gosper_glider_gun --size 80 --fps 12
-uv run python -m tools.viz --pattern glider --pos 5,5 --ticks 200
+uv run python -m tools.viz --pattern pulsar           # striking period-3 oscillator
+uv run python -m tools.viz --pattern r_pentomino --size 120   # a methuselah erupting
+uv run python -m tools.viz --pattern acorn --size 150 --fps 20 # explosive growth
 ```
+
+Figures: still lifes (`block`, `beehive`, `loaf`, `boat`), oscillators (`blinker`, `toad`,
+`beacon`, `pulsar`, `pentadecathlon`), spaceships (`glider`, `lwss`), the `gosper_glider_gun`, and
+methuselahs (`r_pentomino`, `acorn`, `diehard`).
 
 
 ## Status

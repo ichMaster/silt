@@ -30,5 +30,9 @@ def test_build_field_rejects_unknown_pattern() -> None:
 
 
 def test_pattern_registry_matches_engine_figures() -> None:
-    assert set(PATTERNS) == {"glider", "blinker", "gosper_glider_gun"}
+    # viz draws from the engine's single source of truth — every figure must be selectable.
+    from engine.patterns import PATTERNS as ENGINE_PATTERNS
+
+    assert PATTERNS is ENGINE_PATTERNS
+    assert {"glider", "pulsar", "acorn", "lwss", "diehard"} <= set(PATTERNS)
     assert live_count(build_field("gosper_glider_gun", 60, 60)) == 36

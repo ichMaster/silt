@@ -19,13 +19,7 @@ from __future__ import annotations
 import argparse
 
 from engine import Field, empty, live_count, step
-from engine.patterns import blinker, glider, gosper_glider_gun, place
-
-PATTERNS = {
-    "glider": glider,
-    "blinker": blinker,
-    "gosper_glider_gun": gosper_glider_gun,
-}
+from engine.patterns import PATTERNS, place
 
 
 def build_field(

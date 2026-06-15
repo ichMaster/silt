@@ -10,6 +10,7 @@ of the seam shape that v1 fills; v0 accepts and ignores it. See ``specfication/A
 """
 
 from engine.field import Field, empty, from_pattern, live_count
+from engine.patterns import PATTERNS, place
 from engine.step import step
 
-__all__ = ["Field", "empty", "from_pattern", "live_count", "step"]
+__all__ = ["PATTERNS", "Field", "empty", "from_pattern", "live_count", "place", "step"]

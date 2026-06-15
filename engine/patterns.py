@@ -56,6 +56,78 @@ gosper_glider_gun = _pattern(
     ]
 )
 
+# --- still lifes (unchanging under step) -------------------------------------------------------
+
+block = _pattern(["OO", "OO"])
+beehive = _pattern([".OO.", "O..O", ".OO."])
+loaf = _pattern([".OO.", "O..O", ".O.O", "..O."])
+boat = _pattern(["OO.", "O.O", ".O."])
+
+# --- oscillators -------------------------------------------------------------------------------
+
+# Toad — period 2.
+toad = _pattern([".OOO", "OOO."])
+
+# Beacon — period 2.
+beacon = _pattern(["OO..", "OO..", "..OO", "..OO"])
+
+# Pulsar — a large, striking period-3 oscillator.
+pulsar = _pattern(
+    [
+        "..OOO...OOO..",
+        ".............",
+        "O....O.O....O",
+        "O....O.O....O",
+        "O....O.O....O",
+        "..OOO...OOO..",
+        ".............",
+        "..OOO...OOO..",
+        "O....O.O....O",
+        "O....O.O....O",
+        "O....O.O....O",
+        ".............",
+        "..OOO...OOO..",
+    ]
+)
+
+# Pentadecathlon — a period-15 oscillator.
+pentadecathlon = _pattern(["..O....O..", "OO.OOOO.OO", "..O....O.."])
+
+# --- spaceships --------------------------------------------------------------------------------
+
+# Lightweight spaceship (LWSS) — period 4, travels orthogonally at c/2.
+lwss = _pattern([".OO..", "OOOO.", "OO.OO", "..OO."])
+
+# --- methuselahs (small seeds with long, chaotic lifespans) ------------------------------------
+
+# R-pentomino — 5 cells that stay active for over a thousand generations.
+r_pentomino = _pattern([".OO", "OO.", ".O."])
+
+# Acorn — 7 cells that grow explosively for thousands of generations.
+acorn = _pattern([".O.....", "...O...", "OO..OOO"])
+
+# Diehard — 7 cells that vanish completely after exactly 130 generations.
+diehard = _pattern(["......O.", "OO......", ".O...OOO"])
+
+# Registry of every named figure — the single source of truth for callers (e.g. tools.viz).
+PATTERNS: dict[str, np.ndarray] = {
+    "glider": glider,
+    "blinker": blinker,
+    "gosper_glider_gun": gosper_glider_gun,
+    "block": block,
+    "beehive": beehive,
+    "loaf": loaf,
+    "boat": boat,
+    "toad": toad,
+    "beacon": beacon,
+    "pulsar": pulsar,
+    "pentadecathlon": pentadecathlon,
+    "lwss": lwss,
+    "r_pentomino": r_pentomino,
+    "acorn": acorn,
+    "diehard": diehard,
+}
+
 
 def place(field: Field, pattern: np.ndarray, position: tuple[int, int]) -> Field:
     """Stamp ``pattern`` onto a copy of ``field`` at ``position`` (top-left), with toroidal wrap.
