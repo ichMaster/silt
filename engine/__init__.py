@@ -8,3 +8,8 @@ v0 runs vanilla Conway (a fixed ``B3/S23`` rule, no genome). The ``genome`` para
 of the seam shape that v1 fills; v0 accepts and ignores it. See ``specfication/ARCHITECTURE.md``
 (§The engine seam) and ``specfication/ROADMAP.md`` (§v0).
 """
+
+from engine.field import Field, empty, from_pattern, live_count
+from engine.step import step
+
+__all__ = ["Field", "empty", "from_pattern", "live_count", "step"]
