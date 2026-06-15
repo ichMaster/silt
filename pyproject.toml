@@ -14,6 +14,9 @@ dev = [
     "ruff>=0.6",
     "pytest>=8.0",
 ]
+viz = [
+    "matplotlib>=3.8",  # tools/viz.py — a dev-only live viewer; not needed by core/tests/CI
+]
 
 [tool.uv]
 package = false

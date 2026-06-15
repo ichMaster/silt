@@ -27,6 +27,18 @@ uv run pytest            # tests
 CI is hermetic by construction — Silt is pure simulation, with no model, no paid APIs, and no live
 network anywhere in the test suite.
 
+### Dev viewer (optional)
+
+A throwaway live viewer for the engine — *not* the v0.4 web UI; it imports `engine` directly and
+touches nothing else. Needs the optional `viz` extra (matplotlib):
+
+```bash
+uv sync --extra viz
+uv run python -m tools.viz --pattern gosper_glider_gun --size 80 --fps 12
+uv run python -m tools.viz --pattern glider --pos 5,5 --ticks 200
+```
+
+
 ## Status
 
 Greenfield, building by phase. Current phase: **v0.1 — Engine: vanilla Conway** (see the ROADMAP).
