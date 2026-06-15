@@ -28,14 +28,31 @@ def build_field(
     width: int,
     position: tuple[int, int] | None = None,
 ) -> Field:
-    """Seed ``pattern`` onto an empty ``height x width`` field (centered unless ``position`` set)."""
-    if pattern not in PATTERNS:
-        raise ValueError(f"unknown pattern {pattern!r}; choose from {sorted(PATTERNS)}")
-    fig = PATTERNS[pattern]
-    if position is None:
-        ph, pw = fig.shape
-        position = ((height - ph) // 2, (width - pw) // 2)
-    return place(empty(height, width), fig, position)
+    """Seed a single ``pattern`` onto an empty field (centered unless ``position`` set)."""
+    return build_field_multi([(pattern, position)], height, width)
+
+
+def build_field_multi(
+    seeds: list[tuple[str, tuple[int, int] | None]],
+    height: int,
+    width: int,
+) -> Field:
+    """Seed several patterns onto one field, each at its own position (centered if ``None``).
+
+    Patterns are OR-ed on in order (see :func:`engine.patterns.place`), so they may overlap and
+    will interact once stepping begins.
+    """
+    field = empty(height, width)
+    for pattern, position in seeds:
+        if pattern not in PATTERNS:
+            raise ValueError(f"unknown pattern {pattern!r}; choose from {sorted(PATTERNS)}")
+        fig = PATTERNS[pattern]
+        pos = position
+        if pos is None:
+            ph, pw = fig.shape
+            pos = ((height - ph) // 2, (width - pw) // 2)
+        field = place(field, fig, pos)
+    return field
 
 
 def _parse_pos(text: str) -> tuple[int, int]:
@@ -46,6 +63,17 @@ def _parse_pos(text: str) -> tuple[int, int]:
     return row, col
 
 
+def parse_seed(spec: str) -> tuple[str, tuple[int, int] | None]:
+    """Parse a ``NAME`` or ``NAME@ROW,COL`` seed spec into ``(name, position|None)``."""
+    name, _, pos = spec.partition("@")
+    if name not in PATTERNS:
+        raise argparse.ArgumentTypeError(
+            f"unknown pattern {name!r}; choose from {sorted(PATTERNS)}"
+        )
+    position = _parse_pos(pos) if pos else None
+    return name, position
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tools.viz",
@@ -53,6 +81,14 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--pattern", choices=sorted(PATTERNS), default="glider", help="seed figure (default: glider)"
+    )
+    parser.add_argument(
+        "--seed",
+        action="append",
+        type=parse_seed,
+        metavar="NAME[@ROW,COL]",
+        help="place a figure (repeatable, e.g. --seed glider@5,5 --seed lwss@20,30); "
+        "overrides --pattern. Omit @ROW,COL to center.",
     )
     parser.add_argument("--size", type=int, default=80, help="square field size (default: 80)")
     parser.add_argument("--height", type=int, default=None, help="field height (overrides --size)")
@@ -112,8 +148,14 @@ def main(argv: list[str] | None = None) -> None:
     args = _build_parser().parse_args(argv)
     height = args.height if args.height is not None else args.size
     width = args.width if args.width is not None else args.size
-    field = build_field(args.pattern, height, width, args.pos)
-    animate(field, fps=args.fps, ticks=args.ticks, title=f"{args.pattern}  ")
+    if args.seed:
+        field = build_field_multi(args.seed, height, width)
+        names = [name for name, _ in args.seed]
+        label = ", ".join(names) if len(names) <= 3 else f"{len(names)} seeds"
+    else:
+        field = build_field(args.pattern, height, width, args.pos)
+        label = args.pattern
+    animate(field, fps=args.fps, ticks=args.ticks, title=f"{label}  ")
 
 
 if __name__ == "__main__":

@@ -38,6 +38,10 @@ uv run python -m tools.viz --pattern gosper_glider_gun --size 80 --fps 12
 uv run python -m tools.viz --pattern pulsar           # striking period-3 oscillator
 uv run python -m tools.viz --pattern r_pentomino --size 120   # a methuselah erupting
 uv run python -m tools.viz --pattern acorn --size 150 --fps 20 # explosive growth
+
+# several figures at once — repeat --seed NAME@ROW,COL (omit @ROW,COL to center):
+uv run python -m tools.viz --size 80 \
+  --seed gosper_glider_gun@2,2 --seed pulsar@40,40 --seed lwss@60,5
 ```
 
 Figures: still lifes (`block`, `beehive`, `loaf`, `boat`), oscillators (`blinker`, `toad`,
