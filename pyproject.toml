@@ -1,6 +1,6 @@
 [project]
 name = "silt"
-version = "0.0.0"
+version = "0.1.0"
 description = "Silt — an always-on server hosting a shared 2D artificial-life world (Life-like CA / Lenia)."
 readme = "README.md"
 requires-python = ">=3.11"

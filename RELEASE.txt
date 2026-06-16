@@ -1,0 +1,10 @@
+Version 0.1.0 (2026-06-17)
+---------------------------
+- Engine (v0.1): deterministic headless Conway B3/S23 over a toroidal binary grid, behind the
+  step() seam (shaped to accept a v1.1 genome it ignores). [SILT-002]
+- Patterns: named seed figures (glider, blinker, Gosper gun) + a richer figure library, with
+  placement onto a field at a position. [SILT-003]
+- Skeleton & tooling: uv + ruff + pytest + numpy scaffold and hermetic CI. [SILT-001]
+- Dev tooling: live matplotlib engine viewer (dev-only) with multi-pattern seeding.
+- Tests: 42 passing, including pinned determinism (glider translates, blinker has period 2,
+  Gosper gun emits gliders).
