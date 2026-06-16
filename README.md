@@ -38,15 +38,49 @@ uv run python -m tools.viz --pattern gosper_glider_gun --size 80 --fps 12
 uv run python -m tools.viz --pattern pulsar           # striking period-3 oscillator
 uv run python -m tools.viz --pattern r_pentomino --size 120   # a methuselah erupting
 uv run python -m tools.viz --pattern acorn --size 150 --fps 20 # explosive growth
+```
 
-# several figures at once — repeat --seed NAME@ROW,COL (omit @ROW,COL to center):
+A matplotlib window opens and animates `engine.step` from the seeded field until you close it
+(or `--ticks N` stops it).
+
+#### Seeding several patterns at once
+
+Repeat `--seed NAME@ROW,COL` to place multiple figures on the **one shared toroidal field**, each
+at its own spot. They are stamped in order and then evolve together — colliding, merging, and
+wrapping into each other once stepping begins (the whole point of a shared world).
+
+```bash
+# aim a glider gun's stream at a pulsar, with a lightweight spaceship cruising past:
 uv run python -m tools.viz --size 80 \
   --seed gosper_glider_gun@2,2 --seed pulsar@40,40 --seed lwss@60,5
 ```
 
-Figures: still lifes (`block`, `beehive`, `loaf`, `boat`), oscillators (`blinker`, `toad`,
-`beacon`, `pulsar`, `pentadecathlon`), spaceships (`glider`, `lwss`), the `gosper_glider_gun`, and
-methuselahs (`r_pentomino`, `acorn`, `diehard`).
+- **Repeatable** — pass as many `--seed` flags as you like, including the same figure twice
+  (`--seed glider@5,5 --seed glider@40,40`).
+- **Position is optional** — `--seed pulsar` (no `@ROW,COL`) centers it; give `@ROW,COL` (the
+  figure's top-left corner) to place it precisely. With several centered seeds they'll overlap, so
+  positions are recommended when seeding more than one.
+- **Overrides `--pattern`** — if any `--seed` is given, the single-pattern path is ignored.
+
+#### Options
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `--pattern NAME` | `glider` | single figure to seed (centered) |
+| `--seed NAME@ROW,COL` | — | place a figure (repeatable; omit `@ROW,COL` to center); overrides `--pattern` |
+| `--size N` | `80` | square field size |
+| `--width N` / `--height N` | `--size` | non-square field (override `--size`) |
+| `--pos ROW,COL` | centered | top-left for the single `--pattern` |
+| `--ticks N` | run until closed | stop after N ticks |
+| `--fps N` | `12` | animation speed (ticks drawn per second; display-only) |
+
+#### Available figures
+
+- **Still lifes:** `block`, `beehive`, `loaf`, `boat`
+- **Oscillators:** `blinker`, `toad`, `beacon`, `pulsar`, `pentadecathlon`
+- **Spaceships:** `glider`, `lwss`
+- **Gun:** `gosper_glider_gun`
+- **Methuselahs:** `r_pentomino`, `acorn`, `diehard`
 
 
 ## Status
