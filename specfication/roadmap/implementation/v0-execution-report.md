@@ -1,111 +1,151 @@
 # Version v0 — Execution Report
 
-**Date:** 2026-06-15
+**Date:** 2026-06-15 (phase v0.1) · 2026-06-17 (phase v0.2)
 **Branch:** main
 **Label:** v0::version:0
-**Target version:** 0.1.0 (phase v0.1 — *not released*; see Next Steps)
+**Target version:** 0.1.0 (phase v0.1 — *released*) · 0.2.0 (phase v0.2 — *not released*; see Version / release)
 **Executed by:** Claude Code
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Completed | 3 |
+| Completed | 8 (3 in v0.1, 5 in v0.2) |
 | Failed | 0 |
 | Skipped | 0 |
-| Remaining | 0 (of the issues generated so far — phase v0.1 only) |
+| Remaining | 0 (of the issues generated so far — phases v0.1–v0.2) |
 
-All three currently-generated v0 issues (phase **v0.1 — Engine: vanilla Conway**) are implemented,
-validated, and closed. Phases v0.2–v0.5 have not been generated into issues yet.
+All eight currently-generated v0 issues are implemented, validated, and closed: phase **v0.1 —
+Engine: vanilla Conway** (SILT-001…003) and phase **v0.2 — Store, organisms, basic metrics**
+(SILT-004…008). Phases v0.3–v0.5 have not been generated into issues yet.
 
 ## Issues
 
 | # | SILT ID | Title | Phase | Status | Commit | Files | Tests |
 |---|---------|-------|-------|--------|--------|-------|-------|
-| 1 | SILT-001 | Project skeleton + engine package + tooling | v0.1 | completed | c8a55c1 | 8 | pass (1) |
-| 2 | SILT-002 | Conway `step()` over a toroidal binary grid | v0.1 | completed | a71979e | 4 | pass (11) |
-| 3 | SILT-003 | Named seed patterns + placement | v0.1 | completed | 3966413 | 2 | pass (19 total) |
+| 1 | SILT-001 | Project skeleton + engine package + tooling | v0.1 | completed | c8a55c1 | 8 | pass |
+| 2 | SILT-002 | Conway `step()` over a toroidal binary grid | v0.1 | completed | a71979e | 4 | pass |
+| 3 | SILT-003 | Named seed patterns + placement | v0.1 | completed | 3966413 | 2 | pass |
+| 4 | SILT-004 | World record shapes — Event / Organism / World | v0.2 | completed | fb140ab | 3 | pass (5) |
+| 5 | SILT-005 | Organism tracking via connected components | v0.2 | completed | f1425f6 | 3 | pass (8) |
+| 6 | SILT-006 | `Store` interface + SQLite/blob backend | v0.2 | completed | 8dd594f | 4 | pass (8) |
+| 7 | SILT-007 | Replay — reconstruct any tick from snapshot + event log | v0.2 | completed | f321a8e | 5 | pass (6) |
+| 8 | SILT-008 | Minimal display metrics + observe/history payload | v0.2 | completed | 8cfb8b8 | 3 | pass (6) |
 
-## Detailed Results
+**Full suite after v0.2:** 75 tests passing; `ruff check .` clean; no Silt→Lumi import; no RNG/uuid
+in any package (determinism contract holds).
 
-### SILT-001: Project skeleton + engine package + tooling
+## Detailed Results — phase v0.1
 
-**Status:** completed · **Commit:** c8a55c1 · **GitHub:** #1 (closed)
+(See git history c8a55c1 / a71979e / 3966413; released as `v0.1.0`, tag `v0.1.0`.)
 
-**Files changed:**
-- `pyproject.toml` (added) — `uv` + `ruff` (line-length 100; E/F/I/W/UP/B) + `pytest` + `numpy`
-- `engine/__init__.py` (added) — the seam package
-- `tests/__init__.py`, `tests/test_skeleton.py` (added)
-- `.github/workflows/ci.yml` (added) — hermetic CI (`ruff` + `pytest`)
-- `README.md` (added); `CLAUDE.md` (modified — documented build/lint/test commands)
-- `uv.lock` (added)
+- **SILT-001** — repo skeleton, `engine` package, `uv`+`ruff`+`pytest`+`numpy`, hermetic CI.
+- **SILT-002** — `step(field, genome=None)`: fixed Conway B3/S23, 8-neighbor toroidal count, pure.
+- **SILT-003** — named figures (glider, blinker, Gosper gun) + `place` with toroidal wrap.
 
-**Validation:**
-- [x] `uv sync --extra dev`: pass
-- [x] Lint (ruff): pass
-- [x] Tests (pytest): pass
-- [x] py_compile: pass
-- [x] Acceptance criteria: all pass
+## Detailed Results — phase v0.2
 
-### SILT-002: Conway `step()` over a toroidal binary grid
+### SILT-004: World record shapes — Event / Organism / World
 
-**Status:** completed · **Commit:** a71979e · **GitHub:** #2 (closed)
+**Status:** completed · **Commit:** fb140ab · **GitHub:** #4 (closed)
 
 **Files changed:**
-- `engine/field.py` (added) — binary grid (`uint8`) + `empty`/`from_pattern`/`live_count`
-- `engine/step.py` (added) — `step(field, genome=None)`: fixed Conway B3/S23, 8-neighbor toroidal count (`numpy.roll`), pure/deterministic; `genome` accepted & ignored
-- `engine/__init__.py` (modified) — re-export `step` + field helpers
-- `tests/test_step.py` (added) — 10 contract tests
+- `world/records.py` (added) — `Event` / `Organism` / `World` dataclasses + `to_dict`/`from_dict`
+- `world/__init__.py` (added) — the `world` package
+- `tests/test_records.py` (added) — 5 contract round-trip tests
 
 **Validation:**
-- [x] Unit + contract tests (rule, determinism pin, toroidal wrap, purity): pass
-- [x] Lint (ruff): pass
-- [x] py_compile / import: pass
-- [x] Engine has no RNG/global state; no Silt→Lumi import: verified
-- [x] Acceptance criteria: all pass
+- [x] Contract round-trip tests (the three shapes): pass
+- [x] Lint (ruff) · py_compile / import: pass
+- [x] Pure data (no engine/store cycle); `Organism.genome` nullable; field excluded from `to_dict`
+- [x] No Silt→Lumi import: verified · Acceptance criteria: all pass
 
-### SILT-003: Named seed patterns + placement
+### SILT-005: Organism tracking via connected components
 
-**Status:** completed · **Commit:** 3966413 · **GitHub:** #3 (closed)
+**Status:** completed · **Commit:** f1425f6 · **GitHub:** #5 (closed)
 
 **Files changed:**
-- `engine/patterns.py` (added) — `glider`, `blinker`, `gosper_glider_gun` + `place(field, pattern, position)` with toroidal wrap
-- `tests/test_patterns.py` (added) — 8 tests (placement, wrap, and the v0.1 living-behavior DoD)
+- `world/organisms.py` (added) — toroidal 8-connectivity union-find, toroidal bbox, `OrganismTracker`
+- `world/__init__.py` (modified) — export tracker helpers
+- `tests/test_organisms.py` (added) — 8 tests
 
 **Validation:**
-- [x] Unit tests (glider translation, blinker period 2, gun emission, placement/wrap): pass
-- [x] Lint (ruff): pass
-- [x] py_compile: pass
-- [x] Acceptance criteria: all pass
+- [x] Membership stable under a moving glider — single organism, translating bbox (pinned)
+- [x] Toroidal adjacency (edge-straddling region = one organism); `birth_tick` set once
+- [x] Deterministic ids (`org-NNNNNN`, no RNG); `restore` for replay
+- [x] Lint / py_compile / no Silt→Lumi: verified · Acceptance criteria: all pass
 
-## v0.1 Definition of Done (ROADMAP)
+### SILT-006: `Store` interface + SQLite/blob backend
 
-> from a fixed initial field the grid after K ticks is exactly reproducible; the glider translates,
-> the blinker has period 2, and the Gosper gun emits gliders.
+**Status:** completed · **Commit:** 8dd594f · **GitHub:** #6 (closed)
 
-- [x] Field exactly reproducible after K ticks — pinned (`test_step.py`)
-- [x] Glider translates by (1,1) every 4 ticks — pinned (`test_patterns.py`)
-- [x] Blinker has period 2 — pinned (`test_step.py`, `test_patterns.py`)
-- [x] Gosper gun emits gliders — pinned (one glider per 30-tick period, downstream) (`test_patterns.py`)
+**Files changed:**
+- `store/base.py` (added) — abstract `Store` + `Snapshot`
+- `store/sqlite_store.py` (added) — SQLite + `.npy`-blob backend
+- `store/__init__.py` (added) — the `store` package
+- `tests/test_store.py` (added) — 8 tests
 
-**Full suite:** 19 tests passing; `ruff check .` clean. Engine is pure (no RNG/global state), behind
-the `step(field, genome=None)` seam with `genome` accepted and ignored in v0.
+**Validation:**
+- [x] Snapshots + events round-trip **byte-identically** (field blob exact)
+- [x] Event log append-only, totally ordered by `(tick, seq)`; `events(since_tick)` slice correct
+- [x] `load_snapshot(at_tick)` = nearest snapshot at or before tick; hermetic (`:memory:`)
+- [x] Lint / py_compile / no Silt→Lumi: verified · Acceptance criteria: all pass
+
+### SILT-007: Replay — reconstruct any tick from snapshot + event log
+
+**Status:** completed · **Commit:** f321a8e · **GitHub:** #7 (closed)
+
+**Files changed:**
+- `world/simulate.py` (added) — canonical forward rule (apply boundary events → step → track)
+- `store/replay.py` (added) — `replay(store, target_tick)`
+- `world/__init__.py`, `store/__init__.py` (modified) — exports
+- `tests/test_replay.py` (added) — 6 integration tests
+
+**Validation:**
+- [x] Field reconstructed **byte-for-byte** across a snapshot boundary and across an interleaved event (pinned)
+- [x] Events apply at tick boundaries; replayed organisms match the live run
+- [x] Deterministic/pure (frozen clock); LookupError when no snapshot ≤ target
+- [x] Lint / py_compile / no Silt→Lumi: verified · Acceptance criteria: all pass
+
+### SILT-008: Minimal display metrics + observe/history payload
+
+**Status:** completed · **Commit:** 8cfb8b8 · **GitHub:** #8 (closed)
+
+**Files changed:**
+- `evaluator/metrics.py` (added) — `evaluate`/`observe` + `Frame`/`History`
+- `evaluator/__init__.py` (added) — the `evaluator` package
+- `tests/test_metrics.py` (added) — 6 tests
+
+**Validation:**
+- [x] `mass`/`age`/`alive` pinned against fixed recorded runs (glider, dying cell, still life)
+- [x] `observe` bundles metrics + the run and is JSON-serializable
+- [x] Pure/substrate-agnostic (no engine/genome import); evaluate does not mutate
+- [x] Lint / py_compile / no Silt→Lumi: verified · Acceptance criteria: all pass
+
+## v0.2 Definition of Done (ROADMAP)
+
+> a world advanced N ticks with interleaved events, snapshotted and replayed from an earlier snapshot
+> + log, reconstructs byte-for-byte identical state; organisms are tracked across ticks;
+> observe/history returns the basic metrics + the run.
+
+- [x] Byte-for-byte replay across a snapshot boundary with interleaved events — pinned (`test_replay.py`)
+- [x] Organisms tracked across ticks (membership stable under a moving glider) — pinned (`test_organisms.py`)
+- [x] observe/history returns `mass`/`age`/`alive` + the recorded run — pinned (`test_metrics.py`)
+- [x] Contract: `Event`/`Organism`/`World` shapes pinned (`test_records.py`)
 
 ## Version / release
 
-**Not released.** Per the execute-issues rules, the version is not bumped without explicit
-confirmation, and v0 as a whole is incomplete (only phase v0.1 has been generated and implemented;
-v0.2–v0.5 remain). No `VERSION`/tag changes were made.
+- **v0.1 — released** as `0.1.0` (tag `v0.1.0`) earlier this session.
+- **v0.2 — not released.** Per the execute-issues rules the version is not bumped without explicit
+  confirmation. Phase v0.2 is complete and would map to semver **`0.2.0`**; awaiting confirmation to
+  cut it (e.g. `/release-version 0.2.0`). No `pyproject.toml`/`VERSION`/tag changes were made in this run.
 
 ## Next Steps
 
-1. **Generate v0.2–v0.5 issues** — run `/generate-issues v0` to append the remaining v0 phases to
-   `specfication/roadmap/implementation/v0-issues.md` (numbering continues from SILT-003), then
-   `/upload-issues` and `/execute-issues v0::version:0` again.
-   - **v0.2** — Store, organisms, basic metrics (`store` + `world`/`evaluator`): SQLite/blob snapshots,
-     append-only event log, replay; organisms via connected components; `mass`/`age`/`alive`.
+1. **Optionally release `0.2.0`** (phase v0.2 complete) on explicit confirmation.
+2. **Generate v0.3 issues** — `/generate-issues v0.3`, then `/upload-issues` and
+   `/execute-issues v0::version:0`. Numbering continues from SILT-008.
    - **v0.3** — Tick loop + REST API (`world` + `api`): injected clock, events at tick boundaries;
      FastAPI + auth; `/seed`, `/cull`, `/goal`, `/world`, `/organism/{id}`, `/events?since=`.
    - **v0.4** — WebSocket stream + web UI (`api` + `web`).
    - **v0.5** — Client library (`client`); pin the **no Silt→Lumi import** boundary test.
-2. **Consider a v0.1 release** only on explicit confirmation (semver `0.1.0`).
