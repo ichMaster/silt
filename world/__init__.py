@@ -5,6 +5,15 @@ This package owns the record shapes (:mod:`world.records`) the Store persists an
 reads, and organism tracking (:mod:`world.organisms`) over the shared field.
 """
 
+from world.organisms import OrganismTracker, label_components, toroidal_bbox
 from world.records import EVENT_TYPES, Event, Organism, World
 
-__all__ = ["EVENT_TYPES", "Event", "Organism", "World"]
+__all__ = [
+    "EVENT_TYPES",
+    "Event",
+    "Organism",
+    "OrganismTracker",
+    "World",
+    "label_components",
+    "toroidal_bbox",
+]
