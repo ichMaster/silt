@@ -7,6 +7,7 @@ reads, and organism tracking (:mod:`world.organisms`) over the shared field.
 
 from world.organisms import OrganismTracker, label_components, toroidal_bbox
 from world.records import EVENT_TYPES, Event, Organism, World
+from world.simulate import apply_events, genesis, step_world
 
 __all__ = [
     "EVENT_TYPES",
@@ -14,6 +15,9 @@ __all__ = [
     "Organism",
     "OrganismTracker",
     "World",
+    "apply_events",
+    "genesis",
     "label_components",
+    "step_world",
     "toroidal_bbox",
 ]

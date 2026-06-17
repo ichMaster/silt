@@ -7,6 +7,7 @@ opaque field grids and the :mod:`world.records` shapes, never the automaton.
 """
 
 from store.base import Snapshot, Store
+from store.replay import replay
 from store.sqlite_store import SqliteStore
 
-__all__ = ["Snapshot", "SqliteStore", "Store"]
+__all__ = ["Snapshot", "SqliteStore", "Store", "replay"]
