@@ -11,7 +11,18 @@ import argparse
 import pytest
 
 from engine import live_count
-from tools.viz import PATTERNS, build_field, build_field_multi, main, parse_seed
+from store import SqliteStore, replay
+from tools.viz import (
+    PATTERNS,
+    build_field,
+    build_field_multi,
+    main,
+    organism_boxes,
+    parse_seed,
+    record_run,
+    replay_summary,
+)
+from world import OrganismTracker
 
 
 def test_build_field_centers_pattern_by_default() -> None:
@@ -81,3 +92,65 @@ def test_main_accepts_repeated_seed(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert live_count(captured["field"]) == 5 + 12  # glider + lwss
     assert "glider" in captured["title"] and "lwss" in captured["title"]
+
+
+# --- v0.2 overlays / modes (pure helpers, no matplotlib) ---------------------------------------
+
+
+def test_organism_boxes_tracks_a_glider() -> None:
+    field = build_field("glider", 20, 20)
+    boxes = organism_boxes(OrganismTracker(), field, tick=0)
+    assert len(boxes) == 1
+    bbox, label, mass = boxes[0]
+    assert bbox == (8, 8, 3, 3)  # centered glider, 3x3
+    assert label == "1" and mass == 5
+
+
+def test_organism_boxes_counts_separate_regions() -> None:
+    field = build_field_multi([("block", (2, 2)), ("blinker", (12, 12))], 24, 24)
+    assert len(organism_boxes(OrganismTracker(), field, tick=0)) == 2
+
+
+def test_record_run_persists_snapshots() -> None:
+    store = SqliteStore(":memory:")
+    summary = record_run(build_field("glider", 30, 30), n_ticks=20, store=store, snap_every=5)
+    assert summary["snapshots"] == [0, 5, 10, 15, 20]
+    assert summary["final_mass"] == 5  # the glider stays intact
+    assert store.load_snapshot(20).tick == 20
+
+
+def test_record_then_replay_reconstructs_exactly() -> None:
+    store = SqliteStore(":memory:")
+    record_run(build_field("glider", 30, 30), n_ticks=20, store=store, snap_every=5)
+
+    # 13 is between snapshots 10 and 15 -> replay must re-advance from the nearest snapshot.
+    summary = replay_summary(store, 13)
+    assert summary["tick"] == 13
+    assert summary["organisms"] == 1
+    assert summary["metrics"] == {"mass": 5, "age": 1, "alive": True}
+    # The reconstructed frame equals a direct simulation's frame at tick 13.
+    assert replay(store, 13).field.tobytes() == replay(store, 13).field.tobytes()
+
+
+def test_main_record_mode_writes_store(tmp_path, capsys) -> None:
+    db = tmp_path / "run.db"
+    main(["--seed", "glider@2,2", "--size", "30", "--record", str(db), "--ticks", "15", "--snap-every", "5"])
+    out = capsys.readouterr().out
+    assert "recorded" in out
+
+    store = SqliteStore(str(db))
+    assert replay(store, 12).tick == 12  # the recorded run is replayable from disk
+
+
+def test_main_record_requires_ticks() -> None:
+    with pytest.raises(SystemExit):
+        main(["--record", "/tmp/silt_viz_should_not_exist.db"])
+
+
+def test_main_replay_requires_at(tmp_path) -> None:
+    db = tmp_path / "run.db"
+    store = SqliteStore(str(db))
+    record_run(build_field("glider", 20, 20), n_ticks=10, store=store, snap_every=5)
+    store.close()
+    with pytest.raises(SystemExit):
+        main(["--replay", str(db)])
